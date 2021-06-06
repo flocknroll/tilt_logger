@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(name='tilt_logger',
       version='0.1',
@@ -8,7 +8,7 @@ setup(name='tilt_logger',
       author='Florent Dosso',
       author_email='dosso.florent@gmail.com',
       package_dir={'tilt_logger': 'src'},
-      packages=['tilt_logger'],
+      packages=find_packages('tilt_logger'),
       install_requires=[
           'psycopg2-binary',
           'aioblescan'
