@@ -10,7 +10,7 @@ setup(name='tilt_logger',
       package_dir={'tilt_logger': 'src'},
       packages=find_packages('tilt_logger'),
       install_requires=[
-          'psycopg2-binary',
+          'aiopg',
           'aioblescan'
         ]
      )
