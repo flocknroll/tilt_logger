@@ -11,6 +11,7 @@ setup(name='tilt_logger',
       packages=find_packages('tilt_logger'),
       install_requires=[
           'aiopg',
-          'aioblescan'
+          'aioblescan',
+          'python-dateutil'
         ]
      )

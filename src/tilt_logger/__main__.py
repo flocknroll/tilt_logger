@@ -4,6 +4,7 @@ import os
 import asyncio
 
 from datetime import datetime
+from dateutil.tz import tzlocal
 from aioblescan.plugins.tilt import Tilt
 
 pwd = os.environ['TILT_DB_PWD']
@@ -18,8 +19,9 @@ def get_packet_processor(pg_conn):
         if packet:
             print(packet)
             cur = pg_conn.cursor()
+
             cur.execute("INSERT INTO tilt.tilt_log (time, gravity, temp_farenheit, signal, battery) VALUES (%s, %s, %s, %s, %s)",
-                (datetime.now(), packet["minor"], packet["major"], packet["rssi"], packet["tx_power"]))
+                (datetime.now(tz=tzlocal()), packet["minor"], packet["major"], packet["rssi"], packet["tx_power"]))
             pg_conn.commit()
 
     return process_packet
