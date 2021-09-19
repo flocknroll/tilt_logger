@@ -1,13 +1,11 @@
 import aiopg
 import aioblescan as aiobs
-import os
 import asyncio
+import argparse
 
 from datetime import datetime
 from dateutil.tz import tzlocal
 from aioblescan.plugins.tilt import Tilt
-
-pwd = os.environ['TILT_DB_PWD']
 
 
 def get_packet_processor(queue):
@@ -30,16 +28,17 @@ def get_packet_processor(queue):
     return process_packet
 
 
-async def packet_writer(queue):
+async def packet_writer(queue, config):
     """
     Write a TILT packet to the Tilt log table
     """
     try:
-        async with await aiopg.connect(host='localhost', dbname='tilt_db', user='tilt', password=pwd) as pg_conn:
+        async with await aiopg.connect(host=config.db_host, dbname=config.db_name, user=config.db_user, password=config.db_pass) as pg_conn:
             async with await pg_conn.cursor() as cur:
                 while True:
                     packet = await queue.get()
 
+                    # TODO: add serie number/description
                     await cur.execute("INSERT INTO tilt.tilt_log (time, gravity, temp_farenheit, signal, battery) VALUES (%s, %s, %s, %s, %s)",
                             (datetime.now(tz=tzlocal()), packet["minor"], packet["major"], packet["rssi"], packet["tx_power"]))
 
@@ -50,9 +49,17 @@ async def packet_writer(queue):
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Tilt logger.')
+    parser.add_argument('--device-number', default=0, help='Bluetooth device number')
+    parser.add_argument('--db-host', default='localhost')
+    parser.add_argument('--db-name', default='tilt_db')
+    parser.add_argument('--db-user', default='tilt')
+    parser.add_argument('--db-pass', '-p', required=True)
+
+    config = parser.parse_args()
+
     event_loop = asyncio.get_event_loop()
-    # TODO: parameterize the device number
-    socket = aiobs.create_bt_socket(0)
+    socket = aiobs.create_bt_socket(config.device_number)
     # Queue for handling packets asynchronously
     queue = asyncio.Queue()
 
@@ -61,7 +68,7 @@ def main():
     btctrl.process = get_packet_processor(queue)
 
     # Register the packet writer task
-    pg_task = event_loop.create_task(packet_writer(queue))
+    pg_task = event_loop.create_task(packet_writer(queue, config))
 
     # Start the BLE scan
     event_loop.run_until_complete(btctrl.send_scan_request())
