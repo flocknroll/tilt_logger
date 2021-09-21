@@ -2,6 +2,7 @@ import aiopg
 import aioblescan as aiobs
 import asyncio
 import argparse
+import psycopg2
 
 from datetime import datetime
 from dateutil.tz import tzlocal
@@ -33,17 +34,20 @@ async def packet_writer(queue, config):
     Write a TILT packet to the Tilt log table
     """
     try:
-        async with await aiopg.connect(host=config.db_host, dbname=config.db_name, user=config.db_user, password=config.db_pass) as pg_conn:
-            async with await pg_conn.cursor() as cur:
-                while True:
-                    packet = await queue.get()
+        async with await aiopg.create_pool(host=config.db_host, dbname=config.db_name, user=config.db_user, password=config.db_pass, maxsize=2) as pg_pool:
+            while True:
+                try:
+                    with await pg_pool.cursor() as cur:
+                        packet = await queue.get()
 
-                    # TODO: add serie number/description
-                    await cur.execute("INSERT INTO tilt.tilt_log (time, gravity, temp_farenheit, signal, battery) VALUES (%s, %s, %s, %s, %s)",
-                            (datetime.now(tz=tzlocal()), packet["minor"], packet["major"], packet["rssi"], packet["tx_power"]))
+                        # TODO: add serie number/description
+                        await cur.execute("INSERT INTO tilt.tilt_log (time, gravity, temp_farenheit, signal, battery) VALUES (%s, %s, %s, %s, %s)",
+                                (datetime.now(tz=tzlocal()), packet["minor"], packet["major"], packet["rssi"], packet["tx_power"]))
 
-                    print(f"Wrote {packet}")
-                    queue.task_done()
+                        print(f"Wrote {packet}")
+                        queue.task_done()
+                except psycopg2.Error as pge:
+                    print(pge)
     except asyncio.CancelledError:
         pass
 
