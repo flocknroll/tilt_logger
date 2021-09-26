@@ -73,6 +73,8 @@ def main():
 
     # Register the packet writer task
     pg_task = event_loop.create_task(packet_writer(queue, config))
+    # Stops the logger if the writer fails
+    pg_task.add_done_callback(lambda _: event_loop.stop())
 
     # Start the BLE scan
     event_loop.run_until_complete(btctrl.send_scan_request())

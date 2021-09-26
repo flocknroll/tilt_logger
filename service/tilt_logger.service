@@ -1,0 +1,11 @@
+[Unit]
+Description=Tilt logger
+Requires=
+After=
+
+[Service]
+Type=simple
+ExecStart=/home/flo/dev/tilt_logger/service/start.sh
+
+[Install]
+WantedBy=multi-user.target
