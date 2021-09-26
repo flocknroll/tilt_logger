@@ -5,7 +5,7 @@ After=
 
 [Service]
 Type=simple
-ExecStart=/home/flo/dev/tilt_logger/service/start.sh
+ExecStart=/bin/sh -c "source /home/flo/dev/venv/bin/activate && python -m tilt_logger.__main__ --db-pass $(systemd-ask-password --accept-cached Tilt logger)"
 Restart=always
 
 [Install]
