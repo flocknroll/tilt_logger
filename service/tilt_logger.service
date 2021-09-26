@@ -6,6 +6,7 @@ After=
 [Service]
 Type=simple
 ExecStart=/home/flo/dev/tilt_logger/service/start.sh
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
