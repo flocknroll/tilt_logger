@@ -18,10 +18,16 @@ def get_packet_processor(queue):
         """
         AIOBLEScan packet processor fot TILT events
         """
-        ev = aiobs.HCI_Event()
-        ev.decode(data)
-        packet = Tilt().decode(ev)
+        packet = None
         
+        try:
+            ev = aiobs.HCI_Event()
+            ev.decode(data)
+            packet = Tilt().decode(ev)
+        except Exception as e:
+            print(e)
+            pass
+            
         if packet:
             # Enqueue the packet for async processor in the event loop
             queue.put_nowait(packet)
