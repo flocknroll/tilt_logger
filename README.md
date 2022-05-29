@@ -6,6 +6,8 @@
 bluetoothctl -- power on
 ```
 
+Note: check that bluetooth is disabled in /boot/config.txt
+
 2. Start a postgres DB with docker:
 ```bash
 docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=<master_pass> -v /data/postgresql:/var/lib/postgresql/data --name tiltdb timescale/timescaledb:latest-pg13
