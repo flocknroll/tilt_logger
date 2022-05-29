@@ -6,7 +6,7 @@
 bluetoothctl -- power on
 ```
 
-Note: check that bluetooth is disabled in /boot/config.txt
+Note: check that bluetooth isn't disabled in /boot/config.txt
 
 2. Start a postgres DB with docker:
 ```bash
