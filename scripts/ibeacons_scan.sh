@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # iBeacon Scanner
 # refactored script from Radius Networks referenced in this StackOverflow answer:
 # http://stackoverflow.com/questions/21733228/can-raspberrypi-with-ble-dongle-detect-ibeacons?lq=1
