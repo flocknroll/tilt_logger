@@ -13,8 +13,8 @@ setup(name='tilt_logger',
           'aiopg',
           'aioblescan',
           'python-dateutil'
-        ]
+      ],
       entry_points = {
-        'console_scripts': ['tilt-logger=tilt_logger.__main__:main'],
+          'console_scripts': ['tilt-logger=tilt_logger.__main__:main'],
       }
      )
