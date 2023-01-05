@@ -14,6 +14,11 @@ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=<master_pass> -v /data/postgresq
 ```
 
 3. Create a `tilt_db` DB with a `tilt` user
+```sql
+CREATE ROLE tilt WITH LOGIN PASSWORD 'tilt';
+CREATE DATABASE tilt_db;
+GRANT ALL PRIVILEGES ON DATABASE tilt_db TO tilt;
+```
 
 3. Init the DB with [init.sql](./sql/init.sql)
 

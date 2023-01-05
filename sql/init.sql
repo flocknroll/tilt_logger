@@ -13,10 +13,12 @@ create unique index "time" on tilt.tilt_log (time);
 alter table tilt.tilt_log cluster on "time";
 
 -- Optimized for timescaleDB
+create extension timescaledb;
+
 drop table tilt.tilt_log;
 create table tilt.tilt_log
 (
-	time timestamp with time zone,
+	time timestamp with time zone not null,
 	gravity int,
 	temp_farenheit smallint,
 	signal smallint,
@@ -24,3 +26,5 @@ create table tilt.tilt_log
 );
 
 select create_hypertable('tilt.tilt_log', 'time');
+
+grant all on table tilt.tilt_log to tilt;
